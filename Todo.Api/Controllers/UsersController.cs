@@ -20,21 +20,35 @@ namespace Todo.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetAllUsersasync()
         {
-            var result = await sender.Send(new GetallUsersQuery());
+            var result = await sender.Send(new GetAllUsersQuery());
             return Ok(result);
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserByGetUserByIdAsync([FromRoute] Guid userId)
+        public async Task<IActionResult> GetUserByIdAsync([FromRoute] Guid userId)
         {
             var result = await sender.Send(new GetUserByIdQuery(userId));
+            if (result is null)
+            {
+                return NotFound();
+            }
             return Ok(result);
         }
 
         [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateUserasyncUp([FromRoute] Guid userId, [FromBody] UserEntity user)
         {
+            if (userId != user.Id)  // checking if the id in the url is the same id in the object
+            {
+                return BadRequest();
+            }
             var result = await sender.Send(new UpdateUserCommand(userId, user));
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
             return Ok(result);
         }
 
