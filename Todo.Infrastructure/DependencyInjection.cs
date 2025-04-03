@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Todo.Core.Interfaces;
@@ -19,6 +18,7 @@ namespace Todo.Infrastructure
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITodoItemRepository, TodoItemRepository>();
 
             return services;
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Todo.Core.DTOs;
 using Todo.Core.Entities;
 using Todo.Core.Interfaces;
 using Todo.Infrastructure.Data;
@@ -7,16 +8,35 @@ namespace Todo.Infrastructure.Repositories
 {
     internal class TodoItemRepository(AppDbContext dbContext) : ITodoItemRepository
     {
-        public async Task<TodoItemEntity> AddTodoItemAsync(TodoItemEntity entity)
+        /* Add */
+        public async Task<TodoItemDto> AddTodoItemAsync(TodoItemDto todoDto)
         {
-            entity.Id = Guid.NewGuid();
-            dbContext.Todos.Add(entity);
+            var todoEntity = new TodoItemEntity
+            {
+                Title = todoDto.Title,
+                Description = todoDto.Description,
+                DueDate = todoDto.DueDate,
+                IsComplete = todoDto.IsComplete,
+                IsDeleted = todoDto.IsDeleted,
+                OwnerId = todoDto.OwnerId,
+            };
 
+            dbContext.Todos.Add(todoEntity);
             await dbContext.SaveChangesAsync();
 
-            return entity;
+            return new TodoItemDto
+            {
+                Id = todoEntity.Id,
+                Title = todoEntity.Title,
+                Description = todoEntity.Description,
+                DueDate = todoEntity.DueDate,
+                IsComplete = todoEntity.IsComplete,
+                IsDeleted = todoEntity.IsDeleted,
+                OwnerId = todoEntity.OwnerId,
+            };
         }
 
+        /* Delete */
         public async Task<bool> DeleteTodoItemAsync(Guid id)
         {
             var todo = await dbContext.Todos.FirstOrDefaultAsync(x => x.Id == id);
@@ -28,32 +48,67 @@ namespace Todo.Infrastructure.Repositories
             return false;
         }
 
-        public async Task<TodoItemEntity?> GetTodoItemByIdAsync(Guid id)
+        /* Update */
+        public async Task<TodoItemDto?> UpdateTodoItemAsync(TodoItemDto todoDto)
         {
-            return await dbContext.Todos.FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<IEnumerable<TodoItemEntity>> GetTodoItems()
-        {
-            return await dbContext.Todos.ToListAsync();
-        }
-
-        public async Task<TodoItemEntity> UpdateTodoItemAsync(Guid todoId, TodoItemEntity entity)
-        {
-            var todo = await dbContext.Todos.FirstOrDefaultAsync(x => x.Id == todoId);
+            var todo = await dbContext.Todos.FirstOrDefaultAsync(x => x.Id == todoDto.Id);
             if (todo is not null)
             {
-                todo.Title = entity.Title;
-                todo.Description = entity.Description;
-                todo.DueDate = entity.DueDate;
-                todo.IsComplete = entity.IsComplete;
-                todo.IsDeleted = entity.IsDeleted;
+                todo.Title = todoDto.Title;
+                todo.Description = todoDto.Description;
+                todo.DueDate = todoDto.DueDate;
+                todo.IsComplete = todoDto.IsComplete;
+                todo.IsDeleted = todoDto.IsDeleted;
 
                 await dbContext.SaveChangesAsync();
-                return todo;
+                return new TodoItemDto
+                { 
+                    Id = todo.Id,
+                    Title = todo.Title,
+                    Description = todo.Description,
+                    DueDate = todo.DueDate,
+                    IsComplete = todo.IsComplete,
+                    IsDeleted = todo.IsDeleted,
+                    OwnerId = todo.OwnerId,
+                };
             }
+            return null;
+        }
 
-            return entity;
+        /* Get By Id */
+        public async Task<TodoItemDto?> GetTodoItemByIdAsync(Guid id)
+        {
+            var todo = await dbContext.Todos.FirstOrDefaultAsync(x => x.Id == id);
+            if (todo is not null)
+            {
+                return new TodoItemDto
+                {
+                    Id = todo.Id,
+                    Title = todo.Title,
+                    Description = todo.Description,
+                    DueDate = todo.DueDate,
+                    IsComplete = todo.IsComplete,
+                    IsDeleted = todo.IsDeleted,
+                    OwnerId = todo.OwnerId,
+                };
+            }
+            return null;
+
+        }
+
+        /* Get All */
+        public async Task<IEnumerable<TodoItemDto>> GetTodoItemsAsync()
+        {
+            return await dbContext.Todos.Select(t => new TodoItemDto 
+            { 
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                DueDate= t.DueDate,
+                IsComplete = t.IsComplete,
+                IsDeleted = t.IsDeleted,
+                OwnerId = t.OwnerId,
+            }).ToListAsync();
         }
     }
 }

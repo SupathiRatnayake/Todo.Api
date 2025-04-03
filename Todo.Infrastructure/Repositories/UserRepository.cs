@@ -42,7 +42,7 @@ namespace Todo.Infrastructure.Repositories
                     Name = userDto.Name,
                     Email = userDto.Email, // Email should be unique. how to handle duplicate emails?
                 };
-            entity.Id = Guid.NewGuid();
+            
             dbContext.Users.Add(entity);
 
             await dbContext.SaveChangesAsync(); // How to handle if database commit is unsuccessful?

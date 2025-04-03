@@ -9,6 +9,7 @@ namespace Todo.Application
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>(); // register UserService
+            services.AddScoped<ITodoService, TodoService>(); // register TodoService
             return services;
         }
     }

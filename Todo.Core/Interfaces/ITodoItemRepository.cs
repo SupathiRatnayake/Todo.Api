@@ -1,13 +1,14 @@
-﻿using Todo.Core.Entities;
+﻿using Todo.Core.DTOs;
+using Todo.Core.Entities;
 
 namespace Todo.Core.Interfaces
 {
     public interface ITodoItemRepository
     {
-        Task<IEnumerable<TodoItemEntity>> GetTodoItems();
-        Task<TodoItemEntity?> GetTodoItemByIdAsync(Guid id);
-        Task<TodoItemEntity> AddTodoItemAsync(TodoItemEntity entity);
-        Task<TodoItemEntity> UpdateTodoItemAsync(Guid todoId, TodoItemEntity entity);
+        Task<IEnumerable<TodoItemDto>> GetTodoItemsAsync();
+        Task<TodoItemDto?> GetTodoItemByIdAsync(Guid id);
+        Task<TodoItemDto> AddTodoItemAsync(TodoItemDto todoDto);
+        Task<TodoItemDto?> UpdateTodoItemAsync(TodoItemDto todoDto);
         Task<bool> DeleteTodoItemAsync(Guid id);
     }
 }
