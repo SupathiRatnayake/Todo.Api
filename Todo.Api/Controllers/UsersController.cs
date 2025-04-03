@@ -1,33 +1,31 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Todo.Application.Commands;
-using Todo.Application.Queries;
-using Todo.Core.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Todo.Application.Interfaces;
+using Todo.Core.DTOs;
 
 namespace Todo.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(ISender sender) : ControllerBase
+    public class UsersController(IUserService userService) : ControllerBase
     {
         [HttpPost("")]
-        public async Task<IActionResult> AddUserasync([FromBody] UserEntity user)
+        public async Task<IActionResult> AddUserasync([FromBody] UserDto user)
         {
-            var result = await sender.Send(new AddUserCommand(user));
+            var result = await userService.AddUserAsync(user);
             return Ok(result); 
         }
 
         [HttpGet("")]
         public async Task<IActionResult> GetAllUsersasync()
         {
-            var result = await sender.Send(new GetAllUsersQuery());
+            var result = await userService.GetAllUsersAsync();
             return Ok(result);
         }
 
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserByIdAsync([FromRoute] Guid userId)
         {
-            var result = await sender.Send(new GetUserByIdQuery(userId));
+            var result = await userService.GetUserByIdAsync(userId);
             if (result is null)
             {
                 return NotFound();
@@ -36,13 +34,13 @@ namespace Todo.Api.Controllers
         }
 
         [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUserasyncUp([FromRoute] Guid userId, [FromBody] UserEntity user)
+        public async Task<IActionResult> UpdateUserasyncUp([FromRoute] Guid userId, [FromBody] UserDto user)
         {
             if (userId != user.Id)  // checking if the id in the url is the same id in the object
             {
                 return BadRequest();
             }
-            var result = await sender.Send(new UpdateUserCommand(userId, user));
+            var result = await userService.UpdateUserAsync(user);
 
             if (result is null)
             {
@@ -55,7 +53,7 @@ namespace Todo.Api.Controllers
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUserAsync([FromRoute] Guid userId)
         {
-            var result = await sender.Send(new DeleteUserCommand(userId));
+            var result = await userService.DeleteUserAsync(userId);
             return Ok(result);
         }
 

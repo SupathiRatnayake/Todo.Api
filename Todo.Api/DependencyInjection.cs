@@ -1,4 +1,5 @@
 ﻿using Todo.Application;
+using Todo.Core;
 using Todo.Infrastructure;
 
 namespace Todo.Api
@@ -8,7 +9,8 @@ namespace Todo.Api
         public static IServiceCollection AddAppDI(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddApplicationDI()
-                .AddInfrastructureDI(configuration);
+                .AddInfrastructureDI()
+                .AddCoreDI(configuration);
             return services;
         }
     }
