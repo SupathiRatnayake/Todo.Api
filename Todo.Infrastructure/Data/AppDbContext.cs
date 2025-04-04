@@ -10,6 +10,10 @@ namespace Todo.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserEntity>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             modelBuilder.Entity<TodoItemEntity>()
                 .HasOne(t => t.Owner)
                 .WithMany(u => u.TodoItems)

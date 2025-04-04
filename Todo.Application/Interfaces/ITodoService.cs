@@ -1,13 +1,14 @@
-﻿using Todo.Core.DTOs;
+﻿using Todo.Application.Shared;
+using Todo.Core.DTOs;
 
 namespace Todo.Application.Interfaces
 {
     public interface ITodoService
     {
-        Task<IEnumerable<TodoItemDto>> GetAllTodosAsync();
-        Task<TodoItemDto?> GetTodoByIdAsync(Guid id);
-        Task<TodoItemDto> AddTodoAsync(TodoItemDto todoDto);
-        Task<TodoItemDto?> UpdateTodoAsync(TodoItemDto todoDto);
-        Task<bool> DeleteTodoAsync(Guid id);
+        Task<Result<IEnumerable<TodoItemDto>>> GetAllTodosAsync();
+        Task<Result<TodoItemDto>> GetTodoByIdAsync(Guid id);
+        Task<Result<TodoItemDto>> AddTodoAsync(TodoItemDto todoDto);
+        Task<Result> UpdateTodoAsync(TodoItemDto todoDto);
+        Task<Result> DeleteTodoAsync(Guid id);
     }
 }

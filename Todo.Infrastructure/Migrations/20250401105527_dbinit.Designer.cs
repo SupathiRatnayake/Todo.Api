@@ -13,7 +13,7 @@ namespace Todo.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250401105527_dbinit")]
-    partial class dbinit
+    partial class dbInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

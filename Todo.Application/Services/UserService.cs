@@ -1,4 +1,5 @@
 ﻿using Todo.Application.Interfaces;
+using Todo.Application.Shared;
 using Todo.Core.DTOs;
 using Todo.Core.Interfaces;
 
@@ -6,29 +7,50 @@ namespace Todo.Application.Services
 {
     public class UserService(IUserRepository userRepository) : IUserService
     {
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        public async Task<Result<IEnumerable<UserDto>>> GetAllUsersAsync()
         {
-            return await userRepository.GetUsers();
+            var users =  await userRepository.GetUsers();
+            return await Task.FromResult(Result.Success(users));
         }
 
-        public async Task<UserDto?> GetUserByIdAsync(Guid id)
+        public async Task<Result<UserDto>> GetUserByIdAsync(Guid id)
         {
-            return await userRepository.GetUserByIdAsync(id);
+            var user = await userRepository.GetUserByIdAsync(id);
+            if (user is null)
+            {
+                return await Task.FromResult(Result.Failure<UserDto>("User not found."));
+            }
+            return await Task.FromResult(Result.Success(user));
         }
 
-        public async Task<UserDto> AddUserAsync(UserDto userDto) 
+        public async Task<Result<UserDto>> AddUserAsync(UserDto userDto) 
         {
-            return await userRepository.AddUserAsync(userDto);
+            var result = await userRepository.AddUserAsync(userDto);
+            if (result is null)
+            {
+                return await Task.FromResult(Result.Failure<UserDto>("Unable to create user."));
+            }
+            return await Task.FromResult(Result.Success(result));
         }
 
-        public async Task<UserDto?> UpdateUserAsync(UserDto userDto)
+        public async Task<Result> UpdateUserAsync(UserDto userDto)
         {
-            return await userRepository.UpdateUserAsync(userDto);
+            var result = await userRepository.UpdateUserAsync(userDto);
+            if(result is null)
+            {
+                return await Task.FromResult(Result.Failure("Unable to update."));
+            }
+            return await Task.FromResult(Result.Success());
         }
 
-        public async Task<bool> DeleteUserAsync(Guid id)
+        public async Task<Result> DeleteUserAsync(Guid id)
         {
-            return await userRepository.DeletUserAsync(id);
+            var result = await userRepository.DeletUserAsync(id);
+            if (!result)
+            {
+                return await Task.FromResult(Result.Failure("User not found."));
+            }
+            return await Task.FromResult(Result.Success());
         }
     }
 }
