@@ -22,6 +22,15 @@ namespace Todo.Application.Services
             }
             return await Task.FromResult(Result.Success(user));
         }
+        public async Task<Result<UserDto>> GetUserByEmailAsync(EmailRequestDto emailDto)
+        {
+            var user = await userRepository.GetUserByEmailAsync(emailDto);
+            if (user is null)
+            {
+                return await Task.FromResult(Result.Failure<UserDto>("User not found."));
+            }
+            return await Task.FromResult(Result.Success(user));
+        }
 
         public async Task<Result<UserDto>> AddUserAsync(UserDto userDto) 
         {
@@ -51,6 +60,16 @@ namespace Todo.Application.Services
                 return await Task.FromResult(Result.Failure("User not found."));
             }
             return await Task.FromResult(Result.Success());
+        }
+
+        public async Task<Result<UserDto>> AddorUpdateUserAsync(UserDto userDto)
+        {
+            var result = await userRepository.AddOrUpDateUserAsync(userDto);
+            if (result is null)
+            {
+                return await Task.FromResult(Result.Failure<UserDto>("Unable to create or update user."));
+            }
+            return await Task.FromResult(Result.Success(result));
         }
     }
 }

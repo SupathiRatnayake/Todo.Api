@@ -33,6 +33,20 @@ namespace Todo.Infrastructure.Repositories
                 Email = userEntity.Email
             };
         }
+        public async Task<UserDto?> GetUserByEmailAsync(EmailRequestDto emailDto)
+        {
+            var userEntity = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == emailDto.Email);
+            if (userEntity is null)
+            {
+                return null;
+            }
+            return new UserDto
+            {
+                Id = userEntity.Id,
+                Name = userEntity.Name,
+                Email = userEntity.Email
+            };
+        }
 
         public async Task<UserDto> AddUserAsync(UserDto userDto)
         {
@@ -81,5 +95,37 @@ namespace Todo.Infrastructure.Repositories
             return false;
         }
 
+        public async Task<UserDto> AddOrUpDateUserAsync(UserDto userDto)
+        {
+            if (userDto.Id != Guid.Empty)
+            {
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == userDto.Id);
+                if (user is not null)
+                {
+                    user.Name = userDto.Name;
+                    user.Email = userDto.Email;
+
+                    await dbContext.SaveChangesAsync();
+                    return userDto;
+                }
+            }
+            UserEntity entity =
+                new UserEntity
+                {
+                    Name = userDto.Name,
+                    Email = userDto.Email, // Email should be unique. how to handle duplicate emails?
+                };
+
+            dbContext.Users.Add(entity);
+
+            await dbContext.SaveChangesAsync(); // How to handle if database commit is unsuccessful?
+
+            return new UserDto
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Email = entity.Email,
+            };
+        }
     }
 }

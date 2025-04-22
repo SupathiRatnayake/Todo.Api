@@ -9,9 +9,20 @@ namespace Todo.Api.Controllers
     public class UsersController(IUserService userService) : ControllerBase
     {
         [HttpPost("")]
-        public async Task<IActionResult> AddUserasync([FromBody] UserDto user)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserDto user)
         {
             var result = await userService.AddUserAsync(user);
+            return Ok(result); 
+        }
+
+        [HttpPost("getuser")]
+        public async Task<IActionResult> GetUserByEmailAsync([FromBody] EmailRequestDto emailDto)
+        {
+            var result = await userService.GetUserByEmailAsync(emailDto);
+            if (result == null)
+            {
+                return NotFound(result);
+            }
             return Ok(result); 
         }
 
