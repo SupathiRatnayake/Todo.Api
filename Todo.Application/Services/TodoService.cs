@@ -12,9 +12,24 @@ namespace Todo.Application.Services
 {
     public class TodoService(ITodoItemRepository todoRepository) : ITodoService
     {
-        public async Task<Result<TodoItemDto>> AddTodoAsync(TodoItemDto todoDto)
+        public async Task<Result> AddOrUpdateTodoAsync(TodoItemDto todoDto)
         {
+            var existingTodo = await todoRepository.GetTodoItemByIdAsync(todoDto.Id);
+            if (existingTodo != null)
+            {
+                // Update existing TodoEntity
+                var updatedTodo = await todoRepository.UpdateTodoItemAsync(todoDto);
+                if (updatedTodo is null)
+                {
+                    return await Task.FromResult(Result.Failure("Unable to update."));
+                }
+                return await Task.FromResult(Result.Success(updatedTodo));
+            }
             var result = await todoRepository.AddTodoItemAsync(todoDto);
+            if (result is null)
+            {
+                return await Task.FromResult(Result.Failure("Unable to create."));
+            }
             return await Task.FromResult(Result.Success(result));
         }
 
@@ -52,6 +67,12 @@ namespace Todo.Application.Services
                 return await Task.FromResult(Result.Failure("Unable to update."));
             }
             return await Task.FromResult(Result.Success());
+        }
+
+        public async Task<Result<IEnumerable<TodoItemDto>>> GetAllTodosByOwnerAsync(Guid ownerId)
+        {
+            var users = await todoRepository.GetTodoItemsByOwnerAsync(ownerId);
+            return await Task.FromResult(Result.Success(users));
         }
     }
 }

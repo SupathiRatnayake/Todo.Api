@@ -1,6 +1,18 @@
 using Todo.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+// Allow CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => {
+            builder
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+            
+        });
+});
 
 // Add services to the container.
 
@@ -12,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAppDI(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

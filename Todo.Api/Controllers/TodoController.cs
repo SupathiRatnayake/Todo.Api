@@ -9,16 +9,16 @@ namespace Todo.Api.Controllers
     public class TodoController(ITodoService todoService) : ControllerBase
     {
         [HttpPost("")]
-        public async Task<IActionResult> AddTodoAsync([FromBody] TodoItemDto itemDto)
+        public async Task<IActionResult> AddOrUpdateTodoAsync([FromBody] TodoItemDto itemDto)
         {
-            var result = await todoService.AddTodoAsync(itemDto);
+            var result = await todoService.AddOrUpdateTodoAsync(itemDto);
             return Ok(result);
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAllTodosAsync()
+        public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId)
         {
-            var result = await todoService.GetAllTodosAsync();
+            var result = await todoService.GetAllTodosByOwnerAsync(userId);
             return Ok(result);
         }
 
