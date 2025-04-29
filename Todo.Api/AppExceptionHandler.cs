@@ -2,25 +2,26 @@
 
 namespace Todo.Api
 {
-    public class AppExceptionHandler(ILogger<AppExceptionHandler> logger) : IExceptionHandler
+    public class AppExceptionHandler: IExceptionHandler
     {
-        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+        private readonly ILogger _logger;
+        public AppExceptionHandler(ILogger<AppExceptionHandler> logger)
         {
-            if (exception is UnauthorizedAccessException)
-            {
-                await httpContext.Response.WriteAsJsonAsync("Unauthorized");
-                httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
-                return true;
-            }
-            else
-            {
-                await httpContext.Response.WriteAsJsonAsync("Something went wrong");
-                httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                return true;
-            }
+            _logger = logger;
+        }
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext, 
+            Exception exception, 
+            CancellationToken cancellationToken)
+        {
+            _logger.LogError(exception, "Unhandlesd exception occured: {Message}", exception.Message);
 
+            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            httpContext.Response.ContentType = "application/json";
 
+            await httpContext.Response.WriteAsJsonAsync("Something went wrong.", cancellationToken);
 
+            return true;
 
         }
     }

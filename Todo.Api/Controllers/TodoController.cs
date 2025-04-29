@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using System.ComponentModel;
 using Todo.Application.Interfaces;
 using Todo.Core.DTOs;
 
@@ -62,6 +63,12 @@ namespace Todo.Api.Controllers
         {
             var result = await todoService.DeleteTodoAsync(todoId);
             return Ok(result);
+        }
+
+        [HttpGet("testexception")]
+        public async Task<bool> TestException()
+        {
+            throw new NotImplementedException();
         }
     }
 }
