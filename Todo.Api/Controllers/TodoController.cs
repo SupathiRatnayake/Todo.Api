@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Todo.Application.Interfaces;
 using Todo.Core.DTOs;
 
@@ -9,6 +11,7 @@ namespace Todo.Api.Controllers
     public class TodoController(ITodoService todoService) : ControllerBase
     {
         [HttpPost("")]
+        [Authorize]
         public async Task<IActionResult> AddOrUpdateTodoAsync([FromBody] TodoItemDto itemDto)
         {
             var result = await todoService.AddOrUpdateTodoAsync(itemDto);
@@ -16,6 +19,7 @@ namespace Todo.Api.Controllers
         }
 
         [HttpGet("")]
+        [Authorize]
         public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId)
         {
             var result = await todoService.GetAllTodosByOwnerAsync(userId);
@@ -23,6 +27,7 @@ namespace Todo.Api.Controllers
         }
 
         [HttpGet("{todoId}")]
+        [Authorize]
         public async Task<IActionResult> GetTodoById([FromRoute] Guid todoId)
         {
             var result = await todoService.GetTodoByIdAsync(todoId);
@@ -34,6 +39,7 @@ namespace Todo.Api.Controllers
         }
 
         [HttpPut("{todoId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateTodoAsyncUp([FromRoute] Guid todoId, [FromBody] TodoItemDto todoDto)
         {
             if (todoId != todoDto.Id)  // checking if the id in the url is the same id in the object
@@ -51,6 +57,7 @@ namespace Todo.Api.Controllers
         }
 
         [HttpDelete("{todoId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteTodoAsync([FromRoute] Guid todoId)
         {
             var result = await todoService.DeleteTodoAsync(todoId);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Interfaces;
 using Todo.Core.DTOs;
 
@@ -16,6 +17,7 @@ namespace Todo.Api.Controllers
         }
 
         [HttpPost("getuser")]
+        [Authorize]
         public async Task<IActionResult> GetUserByEmailAsync([FromBody] EmailRequestDto emailDto)
         {
             var result = await userService.GetUserByEmailAsync(emailDto);

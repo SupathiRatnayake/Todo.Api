@@ -1,6 +1,31 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Todo.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer( options =>
+    {
+        options.Authority = domain;
+        options.Audience = builder.Configuration["Auth0:Audience"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = ClaimTypes.NameIdentifier,
+        };
+    });
+builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy(
+            "read:todos",
+            policy => policy.Requirements.Add(
+                new HasScopeRequirement("read:todos", domain)
+                )
+            );
+    });
+    builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+
 // Allow CORS
 builder.Services.AddCors(options =>
 {
@@ -36,7 +61,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.MapControllers();
 
