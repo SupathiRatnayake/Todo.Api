@@ -114,7 +114,7 @@ namespace Todo.Infrastructure.Repositories
         public async Task<IEnumerable<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId)
         {
             return await dbContext.Todos
-                .Where(t => t.OwnerId == ownerId)
+                .Where(t => t.OwnerId == ownerId && !t.IsDeleted)
                 .Select(t => new TodoItemDto
             {
                 Id = t.Id,

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using Todo.Api;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +49,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddExceptionHandler<AppExceptionHandler>();
+
 builder.Services.AddAppDI(builder.Configuration);
 
 var app = builder.Build();
@@ -59,6 +64,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler( _ => { });
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -69,6 +76,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.MapControllers();
+//app.MapControllers();
 
 app.Run();
