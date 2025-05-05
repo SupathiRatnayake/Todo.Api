@@ -1,12 +1,13 @@
-﻿using Todo.Core.DTOs;
-using Todo.Core.Entities;
+﻿using Todo.Application.Common;
+using Todo.Application.DTOs;
 
-namespace Todo.Core.Interfaces
+
+namespace Todo.Application.Interfaces
 {
     public interface ITodoItemRepository
     {
         Task<IEnumerable<TodoItemDto>> GetTodoItemsAsync();
-        Task<IEnumerable<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId);
+        Task<PagedList<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId, PaginationParams paginationParams);
         Task<TodoItemDto?> GetTodoItemByIdAsync(Guid id);
         Task<TodoItemDto> AddTodoItemAsync(TodoItemDto todoDto);
         Task<TodoItemDto> AddOrUpDateTodoAsync(TodoItemDto todoDto);

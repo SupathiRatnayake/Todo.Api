@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Todo.Application.Common;
+using Todo.Application.DTOs;
 using Todo.Application.Interfaces;
 using Todo.Application.Shared;
-using Todo.Core.DTOs;
-using Todo.Core.Interfaces;
 
 namespace Todo.Application.Services
 {
@@ -69,9 +64,9 @@ namespace Todo.Application.Services
             return await Task.FromResult(Result.Success());
         }
 
-        public async Task<Result<IEnumerable<TodoItemDto>>> GetAllTodosByOwnerAsync(Guid ownerId)
+        public async Task<Result<PagedList<TodoItemDto>>> GetAllTodosByOwnerAsync(Guid ownerId, PaginationParams paginationParams)
         {
-            var users = await todoRepository.GetTodoItemsByOwnerAsync(ownerId);
+            var users = await todoRepository.GetTodoItemsByOwnerAsync(ownerId, paginationParams);
             return await Task.FromResult(Result.Success(users));
         }
     }

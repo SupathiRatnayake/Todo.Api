@@ -1,7 +1,6 @@
-﻿using Todo.Application.Interfaces;
+﻿using Todo.Application.DTOs;
+using Todo.Application.Interfaces;
 using Todo.Application.Shared;
-using Todo.Core.DTOs;
-using Todo.Core.Interfaces;
 
 namespace Todo.Application.Services
 {

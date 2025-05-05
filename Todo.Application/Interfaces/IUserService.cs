@@ -1,5 +1,5 @@
-﻿using Todo.Application.Shared;
-using Todo.Core.DTOs;
+﻿using Todo.Application.DTOs;
+using Todo.Application.Shared;
 
 namespace Todo.Application.Interfaces
 {

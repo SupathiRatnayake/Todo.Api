@@ -1,4 +1,4 @@
-﻿namespace Todo.Core.DTOs
+﻿namespace Todo.Application.DTOs
 {
     public class TodoItemDto
     {

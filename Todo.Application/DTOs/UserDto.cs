@@ -1,6 +1,6 @@
 ﻿using Todo.Core.Entities;
 
-namespace Todo.Core.DTOs
+namespace Todo.Application.DTOs
 {
     public class UserDto
     {

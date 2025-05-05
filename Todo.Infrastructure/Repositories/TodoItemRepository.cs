@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Todo.Core.DTOs;
 using Todo.Core.Entities;
-using Todo.Core.Interfaces;
 using Todo.Infrastructure.Data;
+using Todo.Application.Common;
+using Todo.Application.DTOs;
+using Todo.Application.Interfaces;
+
 
 namespace Todo.Infrastructure.Repositories
 {
@@ -111,10 +113,17 @@ namespace Todo.Infrastructure.Repositories
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId)
+        public async Task<PagedList<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId, PaginationParams paginationParams)
         {
-            return await dbContext.Todos
+            var query = dbContext.Todos
                 .Where(t => t.OwnerId == ownerId && !t.IsDeleted)
+                .OrderByDescending(t => t.DueDate);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip(paginationParams.Skip)
+                .Take(paginationParams.PageSize)
                 .Select(t => new TodoItemDto
             {
                 Id = t.Id,
@@ -125,6 +134,8 @@ namespace Todo.Infrastructure.Repositories
                 IsDeleted = t.IsDeleted,
                 OwnerId = t.OwnerId,
             }).ToListAsync();
+
+            return new PagedList<TodoItemDto>(items, totalCount, paginationParams.PageNumber, paginationParams.PageSize);
         }
 
         public async Task<TodoItemDto> AddOrUpDateTodoAsync(TodoItemDto todoDto)

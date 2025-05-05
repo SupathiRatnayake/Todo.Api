@@ -1,7 +1,6 @@
-﻿using Todo.Core.DTOs;
-using Todo.Core.Entities;
+﻿using Todo.Application.DTOs;
 
-namespace Todo.Core.Interfaces
+namespace Todo.Application.Interfaces
 {
     public interface IUserRepository
     {

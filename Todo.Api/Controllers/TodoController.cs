@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using System.ComponentModel;
+using Todo.Application.Common;
+using Todo.Application.DTOs;
 using Todo.Application.Interfaces;
-using Todo.Core.DTOs;
 
 namespace Todo.Api.Controllers
 {
@@ -20,10 +19,17 @@ namespace Todo.Api.Controllers
         }
 
         [HttpGet("")]
-        [Authorize]
-        public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId)
+        //[Authorize]
+        public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            var result = await todoService.GetAllTodosByOwnerAsync(userId);
+            var result = await todoService.GetAllTodosByOwnerAsync(
+                userId,
+                new PaginationParams
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                });
+
             return Ok(result);
         }
 
@@ -39,23 +45,23 @@ namespace Todo.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{todoId}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateTodoAsyncUp([FromRoute] Guid todoId, [FromBody] TodoItemDto todoDto)
-        {
-            if (todoId != todoDto.Id)  // checking if the id in the url is the same id in the object
-            {
-                return BadRequest();
-            }
-            var result = await todoService.UpdateTodoAsync(todoDto);
+        //[HttpPut("{todoId}")]
+        //[Authorize]
+        //public async Task<IActionResult> UpdateTodoAsyncUp([FromRoute] Guid todoId, [FromBody] TodoItemDto todoDto)
+        //{
+        //    if (todoId != todoDto.Id)  // checking if the id in the url is the same id in the object
+        //    {
+        //        return BadRequest();
+        //    }
+        //    var result = await todoService.UpdateTodoAsync(todoDto);
 
-            if (result is null)
-            {
-                return NotFound();
-            }
+        //    if (result is null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [HttpDelete("{todoId}")]
         [Authorize]
@@ -65,10 +71,10 @@ namespace Todo.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("testexception")]
-        public async Task<bool> TestException()
-        {
-            throw new NotImplementedException();
-        }
+        //[HttpGet("testexception")]
+        //public async Task<bool> TestException()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

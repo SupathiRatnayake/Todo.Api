@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Todo.Core.DTOs;
+using Todo.Application.DTOs;
+using Todo.Application.Interfaces;
 using Todo.Core.Entities;
-using Todo.Core.Interfaces;
 using Todo.Infrastructure.Data;
 
 namespace Todo.Infrastructure.Repositories
