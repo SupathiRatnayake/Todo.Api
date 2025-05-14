@@ -54,19 +54,9 @@ namespace Todo.Application.Services
             return await Task.FromResult(Result.Success(user));
         }
 
-        public async Task<Result> UpdateTodoAsync(TodoItemDto todoDto)
+        public async Task<Result<PagedList<TodoItemDto>>> GetFilteredTodosByOwnerAsync(Guid ownerId, PaginationParams paginationParams, FilterDTO filter)
         {
-            var result = await todoRepository.UpdateTodoItemAsync(todoDto);
-            if (result is null)
-            {
-                return await Task.FromResult(Result.Failure("Unable to update."));
-            }
-            return await Task.FromResult(Result.Success());
-        }
-
-        public async Task<Result<PagedList<TodoItemDto>>> GetAllTodosByOwnerAsync(Guid ownerId, PaginationParams paginationParams)
-        {
-            var users = await todoRepository.GetTodoItemsByOwnerAsync(ownerId, paginationParams);
+            var users = await todoRepository.GetTodoItemsByOwnerAsync(ownerId, paginationParams, filter);
             return await Task.FromResult(Result.Success(users));
         }
     }

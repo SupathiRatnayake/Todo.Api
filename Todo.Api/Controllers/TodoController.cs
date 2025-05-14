@@ -19,16 +19,17 @@ namespace Todo.Api.Controllers
         }
 
         [HttpGet("")]
-        //[Authorize]
-        public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        [Authorize]
+        public async Task<IActionResult> GetTodosByOwnerAsync([FromQuery] Guid userId, [FromQuery] int pageNumber, [FromQuery] int pageSize, [FromQuery] FilterDTO filter)
         {
-            var result = await todoService.GetAllTodosByOwnerAsync(
+            var result = await todoService.GetFilteredTodosByOwnerAsync(
                 userId,
                 new PaginationParams
                 {
                     PageNumber = pageNumber,
                     PageSize = pageSize,
-                });
+                },
+                filter);
 
             return Ok(result);
         }
@@ -45,23 +46,6 @@ namespace Todo.Api.Controllers
             return Ok(result);
         }
 
-        //[HttpPut("{todoId}")]
-        //[Authorize]
-        //public async Task<IActionResult> UpdateTodoAsyncUp([FromRoute] Guid todoId, [FromBody] TodoItemDto todoDto)
-        //{
-        //    if (todoId != todoDto.Id)  // checking if the id in the url is the same id in the object
-        //    {
-        //        return BadRequest();
-        //    }
-        //    var result = await todoService.UpdateTodoAsync(todoDto);
-
-        //    if (result is null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(result);
-        //}
 
         [HttpDelete("{todoId}")]
         [Authorize]

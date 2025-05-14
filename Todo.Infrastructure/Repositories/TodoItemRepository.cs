@@ -113,11 +113,29 @@ namespace Todo.Infrastructure.Repositories
             }).ToListAsync();
         }
 
-        public async Task<PagedList<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId, PaginationParams paginationParams)
+        public async Task<PagedList<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId, PaginationParams paginationParams, FilterDTO filter)
         {
             var query = dbContext.Todos
-                .Where(t => t.OwnerId == ownerId && !t.IsDeleted)
-                .OrderByDescending(t => t.DueDate);
+                .Where(t => t.OwnerId == ownerId && !t.IsDeleted);
+
+            // Apply filters
+            if (filter.IsComplete.HasValue)
+            {
+                query = query.Where(t => t.IsComplete ==  filter.IsComplete.Value);
+            }
+
+            if (filter.dueDate.HasValue)
+            {
+                query = query.Where(t => t.DueDate.Date == filter.dueDate.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(filter.SearchText))
+            {
+                query = query.Where(t => t.Title.Contains(filter.SearchText));
+            }
+
+            // Sort by date
+            query = query.OrderByDescending(t => t.DueDate);
 
             var totalCount = await query.CountAsync();
 
