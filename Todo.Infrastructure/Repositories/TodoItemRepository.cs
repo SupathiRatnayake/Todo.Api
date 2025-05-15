@@ -116,9 +116,17 @@ namespace Todo.Infrastructure.Repositories
         public async Task<PagedList<TodoItemDto>> GetTodoItemsByOwnerAsync(Guid ownerId, PaginationParams paginationParams, FilterDTO filter)
         {
             var query = dbContext.Todos
-                .Where(t => t.OwnerId == ownerId && !t.IsDeleted);
+                .Where(t => t.OwnerId == ownerId);
 
             // Apply filters
+            if (filter.isDeleted.HasValue)
+            {
+                query = query.Where(t => t.IsDeleted == filter.isDeleted.Value);
+            }
+            else
+            {
+                query = query.Where(t => !(t.IsDeleted));
+            }
             if (filter.IsComplete.HasValue)
             {
                 query = query.Where(t => t.IsComplete ==  filter.IsComplete.Value);
